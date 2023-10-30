@@ -48,12 +48,18 @@ class Solution {
 public:
     std::string intToRoman(int num)
     {
-        std::string roman_notation;
-        size_t thousands;
-        size_t hundreds_above_500;
-        size_t hundreds_above_0;
-        size_t hundreds;
-        size_t tens;
+        std::string roman_notation_thousands;
+        std::string roman_notation_hundreds;
+        std::string roman_notation_tens;
+        std::string roman_notation_units;
+
+        size_t thousands{};
+        size_t hundreds_above_500{};
+        size_t hundreds{};
+        size_t tens_above_50{};
+        size_t tens{};
+        size_t units_above_5{};
+        size_t units{};
 
         bool is_valid_number = true;
         if (num < 1 && num > 3999)
@@ -64,35 +70,94 @@ public:
         
         if (is_valid_number == true)
         {
-            if (num >= 1000)
+            thousands = floor(num/1000);
+            hundreds = floor((num - thousands * 1000)/100);
+            tens = floor((num - (thousands * 1000) - (hundreds * 100)) / 10);
+            units = floor(num - (thousands * 1000) - (hundreds * 100) - (tens * 10));    
+            
+            std::cout << "Thousands: " << thousands << std::endl;
+            std::cout << "Hundreds: " << hundreds << std::endl;
+            std::cout << "Tens: " << tens << std::endl;
+            std::cout << "Units: " << units << std::endl;
+
+            /* fill substring for thousands */
+            roman_notation_thousands.append(thousands, 'M');
+
+            /* fill substring for hundreds */
+            if (hundreds == 9)
             {
-                thousands = floor(num/1000);
-                roman_notation.append(thousands, 'M');
-                hundreds = (num - (thousands * 1000));
-                if (hundreds >= 900)
-                {
-                    roman_notation.append("CM");
-                }
-                else if (hundreds > 500 && hundreds < 900)
-                {
-                    hundreds_above_500 = floor((hundreds - 500)/100);
-                    roman_notation.append("D");
-                    roman_notation.append(hundreds_above_500, 'C');
-                }
-                else if (hundreds >= 400 && hundreds <= 500)
-                {
-                    roman_notation.append("CD");
-                }
-                else if (hundreds >= 100 && hundreds < 400)
-                {
-                    hundreds_above_0 = floor(hundreds/100);
-                    roman_notation.append(hundreds_above_0, 'C');
-                }
+                roman_notation_hundreds.append("CM");
+            }
+            else if (hundreds > 5 && hundreds < 9)
+            {
+                hundreds_above_500 = hundreds - 5;
+                roman_notation_hundreds.append("D");
+                roman_notation_hundreds.append(hundreds_above_500, 'C');
+            }
+            else if (hundreds == 5)
+            {
+                roman_notation_hundreds.append("D");
+            }
+            else if (hundreds == 4)
+            {
+                roman_notation_hundreds.append("CD");
+            }
+            else if (hundreds >= 1 && hundreds < 4)
+            {
+                roman_notation_hundreds.append(hundreds, 'C');
+            }
+            
+            /* fill substring for tens */
+            if (tens == 9)
+            {
+                roman_notation_tens.append("XC");
+            }
+            else if (tens > 5 && tens < 9)
+            {
+                tens_above_50 = tens - 5;
+                roman_notation_tens.append("L");
+                roman_notation_tens.append(tens_above_50, 'X');
+            }
+            else if (tens == 5)
+            {
+                roman_notation_tens.append("L");
+            }
+            else if (tens == 4)
+            {
+                roman_notation_tens.append("XL");
+            }
+            else if (tens >= 1 && tens < 4)
+            {
+                roman_notation_tens.append(tens, 'X');
             }
 
+            /* fill the substring for units*/
+            if (units == 9)
+            {
+                roman_notation_units.append("IX");
+            }
+            else if (units > 5 && units < 9)
+            {
+                units_above_5 = units - 5;
+                roman_notation_units.append("V");
+                roman_notation_units.append(units_above_5, 'I');
+            }
+            else if (units == 5)
+            {
+                roman_notation_units.append("V");
+            }
+            else if (units == 4)
+            {
+                roman_notation_units.append("IV");
+            }
+            else if (units >= 1 && units < 4)
+            {
+                roman_notation_units.append(units, 'I');
+            }
+        
         }
-    
-    return roman_notation;
+
+    return roman_notation_thousands + roman_notation_hundreds + roman_notation_tens + roman_notation_units;
     }
 };
 
@@ -100,7 +165,9 @@ int main()
 {
     Solution solution;
 
-    std::cout << solution.intToRoman(3350) << std::endl;
+    std::cout << solution.intToRoman(3) << std::endl;
+    std::cout << solution.intToRoman(58) << std::endl;
+    std::cout << solution.intToRoman(1994) << std::endl;
 
     return 0;
 }
